@@ -1,0 +1,14 @@
+{
+    "name": "andres-cli",
+    "version": "1.0.0",
+    "license": "MIT",
+    "bin": {
+        "andres-cli": "bin/andres-cli"
+    },
+    "devDependencies": {},
+    "dependencies": {
+        "await-exec": "^0.1.2",
+        "minimist": "^1.2.0",
+        "simple-git": "^1.110.0"
+    }
+}
