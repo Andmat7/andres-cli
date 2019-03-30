@@ -1,0 +1,31 @@
+{
+    "moodle-version": "36",
+    "mysql": {
+        "dbhost": "localhost",
+        "dbname": "moodle36",
+        "dbuser": "moodle36_user",
+        "dbpass": "password"
+    },
+    "moodle":{
+        "adminpass":"password",
+        "fullname":"moodle36",
+        "adminemail":"andrescorredor20@gmail.com",
+        "adminuser":"moodle36",
+        "url":"http://localhost/moodle36/moodle/"
+    },
+    "env":{
+        "php_path":"/usr/local/opt/php@7.1/bin/php"
+    },
+    "plugins":[
+        {
+            "repo":"git@github.com:CaxtonTaylor/snap_hub_ido.git",
+            "path":"theme/snap"
+        },
+        {
+            "repo":"https://github.com/Andmat7/h5p-moodle-plugin",
+            "path":"mod/hvp",
+            "exec":"cd mod/hvp && git submodule update --init && rm -rf editor/ && git clone -b ido_dev https://github.com/CaxtonTaylor/h5p-editor-php-library.git editor ",
+            "branch":"ido_dev"
+        }
+    ]
+}

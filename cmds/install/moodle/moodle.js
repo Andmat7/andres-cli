@@ -23,22 +23,29 @@ module.exports =
             console.log(install)
         }
         async clone_plugin(plugin) {
-            //let clone = await exec(`git clone ${plugin.repo} moodle/${plugin.path}`);
-            let statusSummary = null;
             try {
-                const git = require('simple-git/promise');
-                statusSummary = await git('./moodle').clone(plugin.repo, plugin.path);
-                console.log(statusSummary)
+                let branch = ''
+                if (plugin.branch) {
+                    branch = '-b ' + plugin.branch
+                }
+                let clone = await exec(`git clone ${branch} ${plugin.repo} moodle/${plugin.path}`);
+                console.log(clone)
             }
             catch (e) {
                 console.log(e)
             }
+            if (plugin.exec) {
+                let install = await exec('cd moodle && ' + plugin.exec);
+                console.log(install)                
+            }
         }
         async install_plugins() {
             let plugins = this.config.plugins;
-            plugins.forEach(plugin => {
-                this.clone_plugin(plugin)
+            plugins.forEach(async plugin => {
+                await this.clone_plugin(plugin)
             });
+            this.upgrade();
+
         }
         async upgrade() {
             let env = this.config.env;
