@@ -23,12 +23,13 @@ module.exports =
             console.log(install)
         }
         async clone_plugin(plugin) {
+            let moodle = this.config.moodle;
             try {
                 let branch = ''
                 if (plugin.branch) {
                     branch = '-b ' + plugin.branch
                 }
-                let clone = await exec(`git clone ${branch} ${plugin.repo} moodle/${plugin.path}`);
+                let clone = await exec(`git clone ${branch} ${plugin.repo} ${moodle.path_installation}/${plugin.path}`);
                 console.log(clone)
             }
             catch (e) {

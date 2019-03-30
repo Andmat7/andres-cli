@@ -11,7 +11,9 @@
         "fullname":"moodle36",
         "adminemail":"andrescorredor20@gmail.com",
         "adminuser":"moodle36",
-        "url":"http://localhost/moodle36/moodle/"
+        "url":"http://localhost/moodle36/moodle/",
+        "path_installation":"./moodle",
+        "dataroot":"./moodledata"
     },
     "env":{
         "php_path":"/usr/local/opt/php@7.1/bin/php"
