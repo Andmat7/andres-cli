@@ -50,8 +50,9 @@ module.exports =
         }
         async upgrade() {
             let env = this.config.env;
+            let moodle = this.config.moodle;
             try {
-                let upgrade = await exec(`${env.php_path} moodle/admin/cli/upgrade.php --non-interactive`);
+                let upgrade = await exec(`${env.php_path} ${moodle.path_installation}/admin/cli/upgrade.php --non-interactive`);
                 console.log(upgrade);
             } catch (e) {
                 console.log(e);
