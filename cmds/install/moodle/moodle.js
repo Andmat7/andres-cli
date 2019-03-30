@@ -36,7 +36,7 @@ module.exports =
                 console.log(e)
             }
             if (plugin.exec) {
-                let install = await exec('cd moodle && ' + plugin.exec);
+                let install = await exec(`cd ${moodle.path_installation} && ` + plugin.exec);
                 console.log(install)                
             }
         }
