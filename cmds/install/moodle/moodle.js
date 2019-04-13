@@ -4,6 +4,18 @@ module.exports =
         constructor() {
             this.config = require(process.cwd() + '/install-config.json');
         }
+        async exec(command){
+            const { exec } = require('promisify-child-process');
+            let child = exec(command)
+
+            child.stdout.on('error', (data) => { 
+                console.log('error ' + data) });
+
+            child.stderr.on('data', (data) => {
+                process.stdout.write(`\t ${data}`);
+            });
+            return await child;
+        }
         async download() {
             let moodle_version = this.config['moodle-version']
             let clone = await exec(`git clone --single-branch --depth=1 -b MOODLE_${moodle_version}_STABLE git://git.moodle.org/moodle.git moodle`);
@@ -24,20 +36,37 @@ module.exports =
         }
         async clone_plugin(plugin) {
             let moodle = this.config.moodle;
-            try {
-                let branch = ''
-                if (plugin.branch) {
-                    branch = '-b ' + plugin.branch
-                }
-                let clone = await exec(`git clone ${branch} ${plugin.repo} ${moodle.path_installation}/${plugin.path}`);
-                console.log(clone)
+            let branch = ''
+            if (plugin.branch) {
+                branch = '-b ' + plugin.branch
             }
-            catch (e) {
-                console.log(e)
-            }
+            let command = `git clone --progress ${branch} ${plugin.repo}  ${moodle.path_installation}/${plugin.path}`
+
+            await this.exec(command);
             if (plugin.exec) {
-                let install = await exec(`cd ${moodle.path_installation} && ` + plugin.exec);
-                console.log(install)                
+                let command = `cd ${moodle.path_installation} && ` + plugin.exec
+                await this.exec(command);
+            }
+
+        }
+        async install_plugin(plugin_path) {
+
+            let plugins = this.config.plugins;
+            let exist = false;
+            // await plugins.forEach(async plugin => {
+            //     if (plugin.path === plugin_path) {
+            //         await this.clone_plugin(plugin)
+            //         exist = true;
+            //     }
+            // });
+            for await (const plugin of plugins) {
+                if (plugin.path === plugin_path) {
+                    await this.clone_plugin(plugin)
+                    exist = true;
+                }
+            }
+            if (!exist) {
+                console.log('el plugin no existe')
             }
         }
         async install_plugins() {
@@ -52,8 +81,7 @@ module.exports =
             let env = this.config.env;
             let moodle = this.config.moodle;
             try {
-                let upgrade = await exec(`${env.php_path} ${moodle.path_installation}/admin/cli/upgrade.php --non-interactive`);
-                console.log(upgrade);
+                await this.exec(`${env.php_path} ${moodle.path_installation}/admin/cli/upgrade.php --non-interactive`);
             } catch (e) {
                 console.log(e);
             }

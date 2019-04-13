@@ -8,8 +8,11 @@ module.exports = (args) => {
         case 'moodle_plugins':
             require('./moodle/installPlugins')(args)
             break
+        case 'moodle_plugin':
+            require('./moodle/installPlugin')(args)
+            break
         default:
-            error(`"${cmd}" is not a valid install command!`, true)
+            console.log(`"${cmd}" is not a valid install command!`, true)
             break
     }
 }

@@ -9,6 +9,7 @@
     "dependencies": {
         "await-exec": "^0.1.2",
         "minimist": "^1.2.0",
+        "promisify-child-process": "^3.1.0",
         "simple-git": "^1.110.0"
     }
 }
