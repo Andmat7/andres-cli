@@ -12,6 +12,9 @@ module.exports =
                 console.log('error ' + data) });
 
             child.stderr.on('data', (data) => {
+                process.stderr.write(`\t ${data}`);
+            });
+            child.stdout.on('data', (data) => {
                 process.stdout.write(`\t ${data}`);
             });
             return await child;
