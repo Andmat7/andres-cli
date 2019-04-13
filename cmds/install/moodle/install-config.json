@@ -24,10 +24,10 @@
             "path":"theme/snap"
         },
         {
-            "repo":"https://github.com/Andmat7/h5p-moodle-plugin",
+            "repo":"https://github.com/h5p/h5p-moodle-plugin",
             "path":"mod/hvp",
-            "exec":"cd mod/hvp && git submodule update --init && rm -rf editor/ && git clone -b ido_dev https://github.com/CaxtonTaylor/h5p-editor-php-library.git editor ",
-            "branch":"ido_dev"
+            "exec":"cd mod/hvp && git submodule update --init ",
+            "branch":"stable"
         }
     ]
 }
