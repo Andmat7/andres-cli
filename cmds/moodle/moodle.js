@@ -47,7 +47,7 @@ module.exports =
             let section = args.section
             let url_upload = this.moodle_url + "course/modedit.php?add=hvp&type=&course=" + course_id + "&section=" + section + "&return=0&sr=0"
             let file = args._[2]
-            console.log('updating h5p '+file+'on ' + url_upload)
+            console.log('uploading h5p '+file+'on ' + url_upload)
             await this.page.goto(url_upload)
             const frames = await this.page.frames()
             let frame = frames[1]
