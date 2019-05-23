@@ -37,6 +37,9 @@ module.exports = () => {
     case 'aws':
       require('./cmds/aws')(args)
       break
+    case 'moodle':
+        require('./cmds/moodle')(args)
+        break
     default:
       error(`"${cmd}" is not a valid command!`, true)
       break
