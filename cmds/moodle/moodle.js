@@ -56,15 +56,23 @@ module.exports =
             await this.browser.close();
             console.log('finish')
         }
-        async add_course_hvp(args) {
+        async add_course_with_hvps(args) {
             await this._init()
             await this.login()
             let category_id = args.category_id
             let course_name = args.course_name
             let course_short_name = args.course_short_name
             let course_id = await this._add_course(category_id, course_name, course_short_name)
-            console.log("course created " + course_id)
-            await this.browser.close();
+            await Promise.all([
+                this._upload_hvp(course_id, 0, 'UP/English/General/A1/Lesson1/LearnAndDiscover/A1Lesson1LearnAndDiscoverLearnAndDiscover.h5p'),
+                this._upload_hvp(course_id, 0, 'UP/English/General/A1/Lesson1/ListeningPractice/A1Lesson1ListeningPracticeListeningPractice'),
+                this._upload_hvp(course_id, 0, 'UP/English/General/A1/Lesson1/Presentation/A1Lesson1PresentationPresentation.h5p'),
+                this._upload_hvp(course_id, 0, 'UP/English/General/A1/Lesson1/ReadAndWrite/A1Lesson1ReadAndWriteReadAndWrite.h5p'),
+                this._upload_hvp(course_id, 0, 'UP/English/General/A1/Lesson1/Vocabularies/A1Lesson1ConversationVocabulary.h5p')
+
+            ]);
+
+            this.browser.close();
             console.log('finish')
         }
 
@@ -93,8 +101,10 @@ module.exports =
             await this.page.click("#id_saveanddisplay")
             let url = new URL(this.page.url());
             let course_id = url.searchParams.get("id");
+            console.log("course created " + course_id)
             return course_id;
         }
+
         async upload_hvp(args) {
             await this._init()
             await this.login()
@@ -106,36 +116,36 @@ module.exports =
             console.log('finish')
         }
         async _upload_hvp(course_id, section, file) {
-            let url_upload = this.moodle_url + "course/modedit.php?add=hvp&type=&course=" + course_id + "&section=" + section + "&return=0&sr=0"
+            try {
 
-            console.log('uploading h5p ' + file + ' on ' + url_upload)
-            await this.page.goto(url_upload)
-            const frames = await this.page.frames()
-            let frame = frames[1]
-            const input = await frame.$("#tab-panel-upload > div > div.upload-form > div > input[type=file]");
-            await input.uploadFile(file)
-
-            await frame.click('#upload')
-            await this.page.evaluate(
-                () => {
-                    debugger
-                }
-            )
-            await frame.click('#tab-panel-upload > div > div.upload-form > button')
-            await this.page.evaluate(
-                () => {
-                    debugger
-                }
-            )
-            await frame.waitForSelector('body > div > div.h5peditor-form')
-            await Promise.all([
-                this.page.evaluate(
+                let url_upload = this.moodle_url + "course/modedit.php?add=hvp&type=&course=" + course_id + "&section=" + section + "&return=0&sr=0"
+                console.log('uploading h5p ' + file + ' on ' + url_upload)
+                let page = await this.browser.newPage();
+                await page.goto(url_upload)
+                const frames = await page.frames()
+                let frame = frames[1]
+                const input = await frame.$("#tab-panel-upload > div > div.upload-form > div > input[type=file]");
+                await input.uploadFile(file)
+                await frame.click('#upload')
+                await frame.click('#tab-panel-upload > div > div.upload-form > button')
+                await page.evaluate(
                     () => {
-                        document.querySelector("#id_submitbutton2").click()
+                        debugger
                     }
-                ),
-                this.page.waitForNavigation(),
-            ]);
+                )
+                await frame.waitForSelector('body > div > div.h5peditor-form')
+                await Promise.all([
+                    page.evaluate(
+                        () => {
+                            document.querySelector("#id_submitbutton2").click()
+                        }
+                    ),
+                    page.waitForNavigation(),
+                ]);
+            } catch (error) {
+                console.log(error)
+            }
+
         }
         async get_sesskey() {
             console.log('getting sesskey')

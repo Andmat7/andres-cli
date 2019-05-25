@@ -13,8 +13,8 @@ module.exports = async (args) => {
         case 'add_course':
             await moodle.add_course(args);
             break
-        case 'add_course_hvp':
-                await moodle.add_course_hvp(args);
+        case 'add_course_with_hvps':
+                await moodle.add_course_with_hvps(args);
                 break
         case 'delete_course':
             await moodle.delete_course(args);
