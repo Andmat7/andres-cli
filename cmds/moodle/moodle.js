@@ -1,8 +1,21 @@
 module.exports =
     class Moodle {
         constructor(args) {
+            this.config = require(process.cwd() + '/install-config.json');
             this.puppeteer = require('puppeteer');
-            this.moodle_url = 'http://localhost/moodle34/moodle/'
+            if (args.moodle_url) {
+                this.moodle_url = args.moodle_url
+            }else{
+                this.moodle_url = this.config.moodle.url
+
+            }
+            if (args.moodle_user) {
+                this.moodle_user = args.moodle_user
+            }else{
+                this.moodle_user = this.config.moodle.adminuser
+
+            }
+            this.moodle_password = this.config.moodle.adminpass
             this.devtools = false;
             if (args.devtools) {
                 this.devtools = args.devtools
@@ -27,8 +40,8 @@ module.exports =
             let login_url = this.moodle_url + 'login/index.php'
             console.log('Login to ' + login_url)
             await this.page.goto(login_url);
-            await this.page.type('#username', 'moodle34')
-            await this.page.type('#password', 'password')
+            await this.page.type('#username', this.moodle_user)
+            await this.page.type('#password', this.moodle_password)
             await Promise.all([
                 this.page.click("#loginbtn"),
                 this.page.waitForNavigation(),
