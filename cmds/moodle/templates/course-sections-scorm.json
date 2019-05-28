@@ -1,0 +1,36 @@
+[
+    {
+        "lessonFrom":"1",
+        "activities": [
+            {
+                "type_h5p": "LearnAndDiscover"
+            },
+            {
+                "type_h5p": "ListeningPractice"
+            },
+            {
+                "type_h5p": "LearnAndDiscover"
+            },
+            {
+                "type_h5p": "ReadAndWrite"
+            }
+        ]
+    },
+    {
+        "lessonFrom":"2",
+        "activities": [
+            {
+                "type_h5p": "LearnAndDiscover"
+            },
+            {
+                "type_h5p": "ListeningPractice"
+            },
+            {
+                "type_h5p": "LearnAndDiscover"
+            },
+            {
+                "type_h5p": "ReadAndWrite"
+            }
+        ]
+    }
+]

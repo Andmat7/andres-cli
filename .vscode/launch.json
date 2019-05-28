@@ -2,16 +2,17 @@
     // Use IntelliSense para saber los atributos posibles.
     // Mantenga el puntero para ver las descripciones de los existentes atributos 
     // Para más información, visite: https://go.microsoft.com/fwlink/?linkid=830387
+    // "--devtools=true",
     "version": "0.2.0",
     "configurations": [
 
         {
             "type": "node",
             "request": "launch",
-            
             "name": "Launch Program",
             "program": "${workspaceFolder}/bin/andres-cli",
-            "args": [ "moodle","update","algo" ],
+            "args": [ "moodle","add_course_with_hvps","--category_id=1","--course_name=A1","--course_short_name=GeneralA1Unit1"],
+            "cwd": "/Users/afcorredor/Sites/fromDatabasetoH5P"
         }
     ]
 }
