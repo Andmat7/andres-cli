@@ -93,7 +93,7 @@ module.exports =
                 course.sections = sections;
             }
             var sections_promises = course.sections.map((section, section_id) => this._add_hvps_on_sections(section, section_id, course.id, Lesson_level))
-            course.sections = await Promise.all(sections_promises);å
+            course.sections = await Promise.all(sections_promises);
             return course;
         }
         async _add_hvps_on_sections(section, section_id, course_id, Lesson_level) {
