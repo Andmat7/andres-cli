@@ -177,7 +177,7 @@ module.exports =
             if (!course_id) {
                 new Error("course not created")
                 await this.page.setViewport({ "width": 1200, "height": 3000 })
-                let picture_path =  "./mooode/notcreated.jpg"
+                let picture_path =  "./notcreated.jpg"
                 await this.page.screenshot({ path: picture_path })
             }else{
                 console.log(chalk.green("course created ") + course_id)
