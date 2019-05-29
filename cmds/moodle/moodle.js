@@ -34,7 +34,9 @@ module.exports =
             this.page = await this.browser.newPage();
         }
         async _end() {
-            fs.writeFileSync(this.courses_path, JSON.stringify(this.courses, null, 4));
+            if (this.courses) {
+                fs.writeFileSync(this.courses_path, JSON.stringify(this.courses, null, 4));
+            }
             this.browser.close();
             console.log(chalk.yellow("finish"));
         }
@@ -128,12 +130,15 @@ module.exports =
             let course_id;
             if (!(course_short_name in this.courses)) {
                 course_id = await this._add_course(category_id, course_name, course_short_name)
-                this.courses[course_short_name] = {
-                    "id": course_id,
-                    "short_name": course_short_name,
-                    "name": course_name,
-                    "fromSCORM": true,
-                };
+                if (course_id) {
+                    this.courses[course_short_name] = {
+                        "id": course_id,
+                        "short_name": course_short_name,
+                        "name": course_name,
+                        "fromSCORM": true,
+                    };
+                }
+ 
             } else {
                 course_id = this.courses[course_short_name].id;
             }
@@ -160,6 +165,7 @@ module.exports =
 
         }
         async _add_course(category_id, course_name, course_short_name) {
+            console.log(chalk.yellow("adding course"))
             let url_add_course = this.moodle_url + "course/edit.php?category=" + category_id
             await this.page.goto(url_add_course);
             await this.page.waitForSelector('#id_fullname')
@@ -170,6 +176,9 @@ module.exports =
             let course_id = url.searchParams.get("id");
             if (!course_id) {
                 new Error("course not created")
+                await page.setViewport({ "width": 1200, "height": 3000 })
+                let picture_path =  "./mooode/notcreated.jpg"
+                await page.screenshot({ path: picture_path })
             }else{
                 console.log(chalk.green("course created ") + course_id)
                 return course_id;
