@@ -176,9 +176,9 @@ module.exports =
             let course_id = url.searchParams.get("id");
             if (!course_id) {
                 new Error("course not created")
-                await page.setViewport({ "width": 1200, "height": 3000 })
+                await this.page.setViewport({ "width": 1200, "height": 3000 })
                 let picture_path =  "./mooode/notcreated.jpg"
-                await page.screenshot({ path: picture_path })
+                await this.page.screenshot({ path: picture_path })
             }else{
                 console.log(chalk.green("course created ") + course_id)
                 return course_id;
