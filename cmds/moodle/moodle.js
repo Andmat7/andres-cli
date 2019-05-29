@@ -196,7 +196,7 @@ module.exports =
                 if (!fs.existsSync(file)) {
                     console.log(chalk.red(chalk.underline(file) + " not exits"));
                 } else {
-                    await page.goto(url_upload)
+                    await page.goto(url_upload, { timeout: 120000 })
                     const frames = await page.frames()
                     let frame = frames[1]
                     await frame.waitForSelector("#tab-panel-upload > div > div.upload-form > div > input[type=file]",{timeout:100000})
