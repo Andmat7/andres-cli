@@ -137,7 +137,9 @@ module.exports =
             } else {
                 course_id = this.courses[course_short_name].id;
             }
-            this.courses[course_short_name] = await this._add_hvps(this.courses[course_short_name], "A1")
+            if (course_id) {
+                this.courses[course_short_name] = await this._add_hvps(this.courses[course_short_name], "A1")
+            }
             await this._end()
         }
 
@@ -152,8 +154,8 @@ module.exports =
         }
         async _delete_course(course_id) {
             this.sesskey = await this.get_sesskey();
-            let url_add_course = this.moodle_url + "course/delete.php?id=" + course_id
-            await this.page.goto(url_add_course);
+            let url__delete_course = this.moodle_url + "course/delete.php?id=" + course_id
+            await this.page.goto(url__delete_course);
             await this.page.click("#modal-footer > div > div:nth-child(1) > form > button")
 
         }
@@ -166,8 +168,13 @@ module.exports =
             await this.page.click("#id_saveanddisplay")
             let url = new URL(this.page.url());
             let course_id = url.searchParams.get("id");
-            console.log("course created " + course_id)
-            return course_id;
+            if (!course_id) {
+                new Error("course not created")
+            }else{
+                console.log(chalk.green("course created ") + course_id)
+                return course_id;
+            }
+
         }
 
         async upload_hvp(args) {
