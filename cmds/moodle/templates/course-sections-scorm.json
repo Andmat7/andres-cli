@@ -6,13 +6,13 @@
                 "type_h5p": "LearnAndDiscover"
             },
             {
+                "type_h5p": "ReadAndWrite"
+            },
+            {
                 "type_h5p": "ListeningPractice"
             },
             {
-                "type_h5p": "LearnAndDiscover"
-            },
-            {
-                "type_h5p": "ReadAndWrite"
+                "type_h5p": "ProgressCheck"
             }
         ]
     },
@@ -23,13 +23,26 @@
                 "type_h5p": "LearnAndDiscover"
             },
             {
+                "type_h5p": "ReadAndWrite"
+            },
+            {
                 "type_h5p": "ListeningPractice"
             },
             {
-                "type_h5p": "LearnAndDiscover"
+                "type_h5p": "ProgressCheck"
+            }
+        ]
+    },
+    {
+        
+        "activities": [
+            {
+                "type_h5p": "Presentation",
+                "lessonFrom":"1"
             },
             {
-                "type_h5p": "ReadAndWrite"
+                "type_h5p": "Presentation",
+                "lessonFrom":"2"
             }
         ]
     }

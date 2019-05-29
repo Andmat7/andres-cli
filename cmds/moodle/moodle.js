@@ -1,4 +1,5 @@
 const fs = require("fs");
+const chalk = require('chalk');
 module.exports =
     class Moodle {
         constructor(args) {
@@ -35,7 +36,7 @@ module.exports =
         async _end() {
             fs.writeFileSync(this.courses_path, JSON.stringify(this.courses, null, 4));
             this.browser.close();
-            console.log("finish")
+            console.log(chalk.yellow("finish"));
         }
         async _debugger() {
             await Promise.all([
@@ -49,7 +50,7 @@ module.exports =
 
         async login() {
             let login_url = this.moodle_url + 'login/index.php'
-            console.log('Login to ' + login_url)
+            console.log('Login to ' + chalk.green(login_url))
             await this.page.goto(login_url);
             await this.page.type('#username', this.moodle_user)
             await this.page.type('#password', this.moodle_password)
@@ -82,7 +83,8 @@ module.exports =
             console.log('finish')
         }
 
-        async _add_hvps(course, Lesson_level, Lesson_name, fromSCORM) {
+        async _add_hvps(course, Lesson_level) {
+
             if (!("sections" in course)) {
                 let sections = []
                 if (course.fromSCORM) {
@@ -90,24 +92,32 @@ module.exports =
                 }
                 course.sections = sections;
             }
-            for (let section_id = 0; section_id < course.sections.length; section_id++) {
-                const section = course.sections[section_id];
-                for (let j = 0; j < section.activities.length; j++) {
-                    const activity = section.activities[j];
-                    if (!activity.id) {
-                        activity.id = await this._upload_hvp_with_type(activity.type_h5p, course.id, section_id, Lesson_level, Lesson_name);
-                    }
-                    section.activities[j] = activity
-                }
-                course.sections[section_id] = section
-
-            }
-
+            var sections_promises = course.sections.map((section, section_id) => this._add_hvps_on_sections(section, section_id, course.id, Lesson_level))
+            course.sections = await Promise.all(sections_promises);å
             return course;
+        }
+        async _add_hvps_on_sections(section, section_id, course_id, Lesson_level) {
+            for (let j = 0; j < section.activities.length; j++) {
+                const activity = section.activities[j];
+                if (!activity.id) {
+                    let Lesson_name
+                    if (activity.lessonFrom) {
+                        Lesson_name = activity.lessonFrom;
+                    } else {
+                        Lesson_name = section.lessonFrom;
+
+                    }
+                    let activity_id = await this._upload_hvp_with_type(activity.type_h5p, course_id, section_id, Lesson_level, Lesson_name);
+                    activity.id = activity_id
+                }
+                section.activities[j] = activity
+            }
+            return section;
         }
         async _upload_hvp_with_type(type, course_id, section_id, Lesson_level, Lesson_name) {
             let h5p_name = Lesson_level + 'Lesson' + Lesson_name + type + type + '.h5p'
-            await this._upload_hvp(course_id, section_id, 'UP/English/General/' + Lesson_level + '/Lesson' + Lesson_name + '/' + type + '/' + h5p_name)
+            let activity_id = await this._upload_hvp(course_id, section_id, 'UP/English/General/' + Lesson_level + '/Lesson' + Lesson_name + '/' + type + '/' + h5p_name)
+            return activity_id;
         }
         async add_course_with_hvps(args) {
             await this._init()
@@ -127,7 +137,7 @@ module.exports =
             } else {
                 course_id = this.courses[course_short_name].id;
             }
-            this.courses[course_short_name] = await this._add_hvps(this.courses[course_short_name], "A1", 1, true)
+            this.courses[course_short_name] = await this._add_hvps(this.courses[course_short_name], "A1")
             await this._end()
         }
 
@@ -168,44 +178,56 @@ module.exports =
             let file = args._[2]
             await this._upload_hvp(course_id, section, file)
             await this.browser.close();
-            console.log('finish')
+            console.log(chalk.yellow('finish'));
         }
 
-        async _upload_hvp(course_id, section, file) {
-
+        async _upload_hvp(course_id, section_id, file) {
+            let url_upload = this.moodle_url + "course/modedit.php?add=hvp&type=&course=" + course_id + "&section=" + section_id + "&return=0&sr=0"
+            console.log(chalk.yellow('uploading :') + file.split('/').pop())
+            let page = await this.browser.newPage();
             try {
+                if (!fs.existsSync(file)) {
+                    console.log(chalk.red(chalk.underline(file) + " not exits"));
+                } else {
+                    await page.goto(url_upload)
+                    const frames = await page.frames()
+                    let frame = frames[1]
+                    await frame.waitForSelector("#tab-panel-upload > div > div.upload-form > div > input[type=file]",{timeout:100000})
+                    const input = await frame.$("#tab-panel-upload > div > div.upload-form > div > input[type=file]");
+                    await input.uploadFile(file)
+                    await frame.click('#upload')
+                    await frame.click('#tab-panel-upload > div > div.upload-form > button')
+                    await frame.waitForSelector('body > div > div.h5peditor-form', {
+                        timeout: 100000
+                    })
+                    await Promise.all([
+                        page.evaluate(
+                            () => {
+                                document.querySelector("#id_submitbutton").click()
+                            }
+                        ),
+                        page.waitForNavigation(),
+                    ]);
+                    let activity_string = await page.evaluate(
+                        (section_id) => {
+                            return document.querySelector("#section-"+section_id+" .content ul.section>li:nth-last-child(1)").id
+                        },section_id
+                    )
+                    let activity_id = activity_string.split('-')[1]
+                    console.log('uploaded h5p with id=' + activity_id)
+                    page.close();
+                    return activity_id;
 
-                let url_upload = this.moodle_url + "course/modedit.php?add=hvp&type=&course=" + course_id + "&section=" + section + "&return=0&sr=0"
-                console.log('uploading h5p ' + file + ' on ' + url_upload)
-                let page = await this.browser.newPage();
-                await page.goto(url_upload)
-                const frames = await page.frames()
-                let frame = frames[1]
-                const input = await frame.$("#tab-panel-upload > div > div.upload-form > div > input[type=file]");
-                await input.uploadFile(file)
-                await frame.click('#upload')
-                await frame.click('#tab-panel-upload > div > div.upload-form > button')
-                await frame.waitForSelector('body > div > div.h5peditor-form', {
-                    timeout: 100000
-                })
-                await Promise.all([
-                    page.evaluate(
-                        () => {
-                            document.querySelector("#id_submitbutton").click()
-                        }
-                    ),
-                    page.waitForNavigation(),
-                ]);
-                let activity_string = await page.evaluate(
-                    () => {
-                        return document.querySelector("#section-0 .content ul.section>li:nth-last-child(2)").id
-                    }
-                )
-                let activity_id = activity_string.split('-')[1]
-                console.log('uploaded h5p with id' + activity_id)
-                return activity_id;
+                }
+
             } catch (error) {
-                console.log(error.stack)
+                await page.setViewport({ "width": 1200, "height": 3000 })
+                let picture_path = Date.now() + ".jpg"
+                await page.screenshot({ path: picture_path })
+                //console.log(chalk.red('Hello', chalk.underline.bgBlue('world') + '!'))
+                console.log(chalk.red(error.message));
+                console.log(error.stack);
+                page.close();
             }
 
         }
