@@ -138,7 +138,7 @@ module.exports =
                         "fromSCORM": true,
                     };
                 }
- 
+
             } else {
                 course_id = this.courses[course_short_name].id;
             }
@@ -161,7 +161,12 @@ module.exports =
             this.sesskey = await this.get_sesskey();
             let url__delete_course = this.moodle_url + "course/delete.php?id=" + course_id
             await this.page.goto(url__delete_course);
-            await this.page.click("#modal-footer > div > div:nth-child(1) > form > button")
+            if (this.config.moodle.theme == "snap") {
+                await this.page.click("#notice > div > div:nth-child(1) > form > button")
+            } else {
+                await this.page.click("#modal-footer > div > div:nth-child(1) > form > button")
+            }
+
 
         }
         async _add_course(category_id, course_name, course_short_name) {
@@ -177,9 +182,9 @@ module.exports =
             if (!course_id) {
                 new Error("course not created")
                 await this.page.setViewport({ "width": 1200, "height": 3000 })
-                let picture_path =  "./notcreated.jpg"
+                let picture_path = "./notcreated.jpg"
                 await this.page.screenshot({ path: picture_path })
-            }else{
+            } else {
                 console.log(chalk.green("course created ") + course_id)
                 return course_id;
             }
@@ -208,13 +213,13 @@ module.exports =
                     await page.goto(url_upload, { timeout: 120000 })
                     const frames = await page.frames()
                     let frame = frames[1]
-                    await frame.waitForSelector("#tab-panel-upload > div > div.upload-form > div > input[type=file]",{timeout:100000})
+                    await frame.waitForSelector("#tab-panel-upload > div > div.upload-form > div > input[type=file]", { timeout: 100000 })
                     const input = await frame.$("#tab-panel-upload > div > div.upload-form > div > input[type=file]");
                     await input.uploadFile(file)
                     await frame.click('#upload')
                     await frame.click('#tab-panel-upload > div > div.upload-form > button')
                     await frame.waitForSelector('body > div > div.h5peditor-form', {
-                        timeout: 100000
+                        timeout: 600000
                     })
                     await Promise.all([
                         page.evaluate(
@@ -224,11 +229,23 @@ module.exports =
                         ),
                         page.waitForNavigation(),
                     ]);
-                    let activity_string = await page.evaluate(
-                        (section_id) => {
-                            return document.querySelector("#section-"+section_id+" .content ul.section>li:nth-last-child(1)").id
-                        },section_id
-                    )
+                    let activity_string
+                    if (this.config.moodle.theme=="snap") {
+                        activity_string = await page.evaluate(
+                            (section_id) => {
+                                let lies = document.querySelectorAll("#section-" + section_id + " .content ul.section>li.activity")
+                                debugger;
+                                return lies[lies.length-1].id
+                            }, section_id
+                        )
+                    } else {
+                         activity_string = await page.evaluate(
+                            (section_id) => {
+                                return document.querySelector("#section-" + section_id + " .content ul.section>li:nth-last-child(1)").id
+                            }, section_id
+                        )
+                    }
+                    
                     let activity_id = activity_string.split('-')[1]
                     console.log('uploaded h5p with id=' + activity_id)
                     page.close();
