@@ -1,0 +1,23 @@
+[
+    {
+        "lessonFrom":"19",
+        "activities": [
+            {
+                "type_h5p": "GFlashcards"
+            },
+            {
+                "type_h5p": "GListeningPractice"
+            },
+            {
+                "type_h5p": "GVocabulary"
+            },
+            {
+                "type_h5p": "GLearnAndDiscover"
+            },
+            {
+                "type_h5p": "GPresentation"
+            }
+            
+        ]
+    }
+]

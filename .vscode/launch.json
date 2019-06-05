@@ -12,8 +12,8 @@
             "console": "integratedTerminal",
             "name": "Launch Program",
             "program": "${workspaceFolder}/bin/andres-cli",
-            "args": [ "moodle","add_course_with_hvps","--devtools=false","--category_id=1","--course_name='Unit1: “Language Function”'","--course_short_name=GeneralA1Unit1"],
-            "cwd": "/Users/afcorredor/Sites/fromDatabasetoH5P"
+            "args": [ "moodle","add_course_with_hvps","--devtools=true","--category_id=1","--course_name='Unit1: “Language Function”'","--course_short_name=GeneralB1_3Unit1","--from_h5p=gsheet","--lesson_level=B1_3"],
+            "cwd": "/Users/afcorredor/Sites/moodle_courses"
         }
     ]
 }

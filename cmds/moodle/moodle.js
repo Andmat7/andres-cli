@@ -89,8 +89,11 @@ module.exports =
 
             if (!("sections" in course)) {
                 let sections = []
-                if (course.fromSCORM) {
+                if (course.fromH5P == "scorm") {
                     sections = require('./templates/course-sections-scorm.json');
+                }
+                if (course.fromH5P == "gsheet") {
+                    sections = require('./templates/course-sections-gsheet.json');
                 }
                 course.sections = sections;
             }
@@ -126,6 +129,8 @@ module.exports =
             await this.login()
             let category_id = args.category_id
             let course_name = args.course_name
+            let from_h5p = args.from_h5p
+            let lesson_level = args.lesson_level
             let course_short_name = args.course_short_name
             let course_id;
             if (!(course_short_name in this.courses)) {
@@ -135,7 +140,7 @@ module.exports =
                         "id": course_id,
                         "short_name": course_short_name,
                         "name": course_name,
-                        "fromSCORM": true,
+                        "fromH5P": from_h5p,
                     };
                 }
 
@@ -143,7 +148,7 @@ module.exports =
                 course_id = this.courses[course_short_name].id;
             }
             if (course_id) {
-                this.courses[course_short_name] = await this._add_hvps(this.courses[course_short_name], "A1")
+                this.courses[course_short_name] = await this._add_hvps(this.courses[course_short_name], lesson_level)
             }
             await this._end()
         }
@@ -230,22 +235,22 @@ module.exports =
                         page.waitForNavigation(),
                     ]);
                     let activity_string
-                    if (this.config.moodle.theme=="snap") {
+                    if (this.config.moodle.theme == "snap") {
                         activity_string = await page.evaluate(
                             (section_id) => {
                                 let lies = document.querySelectorAll("#section-" + section_id + " .content ul.section>li.activity")
                                 debugger;
-                                return lies[lies.length-1].id
+                                return lies[lies.length - 1].id
                             }, section_id
                         )
                     } else {
-                         activity_string = await page.evaluate(
+                        activity_string = await page.evaluate(
                             (section_id) => {
                                 return document.querySelector("#section-" + section_id + " .content ul.section>li:nth-last-child(1)").id
                             }, section_id
                         )
                     }
-                    
+
                     let activity_id = activity_string.split('-')[1]
                     console.log('uploaded h5p with id=' + activity_id)
                     page.close();
