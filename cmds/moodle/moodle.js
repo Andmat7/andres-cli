@@ -173,7 +173,7 @@ module.exports =
             console.log(chalk.yellow("adding course"))
             let url_add_course = this.moodle_url + "course/edit.php?category=" + category_id
             await this.page.goto(url_add_course);
-            await this.page.waitForSelector('#id_fullname')
+            await this.page.waitForSelector('#id_fullname', { timeout: 100000 })
             await this.page.type('#id_fullname', course_name)
             await this.page.type('#id_shortname', course_short_name)
             await this.page.click("#id_saveanddisplay")
