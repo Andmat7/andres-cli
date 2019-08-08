@@ -3,9 +3,6 @@
         "lessonFrom":"1",
         "activities": [
             {
-                "type_h5p": "LearnAndDiscover"
-            },
-            {
                 "type_h5p": "ReadAndWrite"
             },
             {
@@ -13,6 +10,9 @@
             },
             {
                 "type_h5p": "ProgressCheck"
+            },
+            {
+                "type_h5p": "LearnAndDiscover"
             }
         ]
     },
@@ -20,9 +20,6 @@
         "lessonFrom":"2",
         "activities": [
             {
-                "type_h5p": "LearnAndDiscover"
-            },
-            {
                 "type_h5p": "ReadAndWrite"
             },
             {
@@ -30,6 +27,9 @@
             },
             {
                 "type_h5p": "ProgressCheck"
+            },
+            {
+                "type_h5p": "LearnAndDiscover"
             }
         ]
     },
@@ -37,9 +37,6 @@
         "lessonFrom":"3",
         "activities": [
             {
-                "type_h5p": "LearnAndDiscover"
-            },
-            {
                 "type_h5p": "ReadAndWrite"
             },
             {
@@ -47,6 +44,9 @@
             },
             {
                 "type_h5p": "ProgressCheck"
+            },
+            {
+                "type_h5p": "LearnAndDiscover"
             }
         ]
     },

@@ -89,16 +89,19 @@ module.exports =
       }
 
       async _add_hvps (course, Lesson_level, course_short_name) {
+
         if (!('sections' in course) || course.sections.length === 0) {
           let sections = []
-          if (course.fromH5P === 'scorm') {
+          console.log(course.from_h5p)
+          if (course.from_h5p === 'scorm') {
             sections = require('./templates/course-sections-scorm.json')
           }
-          if (course.fromH5P === 'gsheet') {
+          if (course.from_h5p === 'gsheet') {
             sections = require('./templates/course-sections-gsheet.json')
           }
           course.sections = sections
         }
+
         var sections_promises = course.sections.map((section, section_id) => this._add_hvps_on_sections(section, section_id, course.id, Lesson_level, course_short_name))
         course.sections = await Promise.all(sections_promises)
         return course
@@ -143,13 +146,20 @@ module.exports =
               'id': course_id,
               'short_name': course_short_name,
               'name': course_name,
-              'fromH5P': from_h5p
+              'from_h5p': from_h5p
             }
           }
         } else {
           course_id = this.courses[course_short_name].id
+          
         }
         if (course_id) {
+          this.courses[course_short_name] = {
+            'id': course_id,
+            'short_name': course_short_name,
+            'name': course_name,
+            'from_h5p': from_h5p
+          }
           this.courses[course_short_name] = await this._add_hvps(this.courses[course_short_name], lesson_level, course_short_name)
         }
         await this._end()

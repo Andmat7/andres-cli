@@ -16,6 +16,12 @@
             },
             {
                 "type_h5p": "GPresentation"
+            },
+            {
+                "type_h5p": "GProgressCheck"
+            },
+            {
+                "type_h5p": "GReadAndWrite"
             }
             
         ]
