@@ -7,17 +7,22 @@ module.exports =
         async exec(command){
             const { exec } = require('promisify-child-process');
             let child = exec(command)
+            try {
+                child.stdout.on('error', (data) => { 
+                    console.log('error prueba' + data) 
+                })
+    
+                child.stderr.on('data', (data) => {
+                    process.stderr.write(`\t ${data}`);
+                });
+                child.stdout.on('data', (data) => {
+                    process.stdout.write(`\t ${data}`);
+                });
+                return await child;
+            } catch (error) {
+                console.log(error)
+            }
 
-            child.stdout.on('error', (data) => { 
-                console.log('error ' + data) });
-
-            child.stderr.on('data', (data) => {
-                process.stderr.write(`\t ${data}`);
-            });
-            child.stdout.on('data', (data) => {
-                process.stdout.write(`\t ${data}`);
-            });
-            return await child;
         }
         async download() {
             let moodle_version = this.config['moodle-version']
@@ -26,16 +31,23 @@ module.exports =
             console.log(clone.stdout);
         }
         async create_moodledata() {
-            await exec(`mkdir moodledata`);
-            await exec(`chmod -R +a "_www allow read,delete,write,append,file_inherit,directory_inherit" moodledata`);
+            await exec(`mkdir  ${this.config.moodle.dataroot}`);
+            await exec(`chmod -R +a "_www allow read,delete,write,append,file_inherit,directory_inherit" ${this.config.moodle.dataroot}`);
         }
         async install() {
             let mysql = this.config.mysql;
             let moodle = this.config.moodle;
             let env = this.config.env;
             let dataroot = process.cwd() + '/moodledata';
-            let install = await exec(`${env.php_path} moodle/admin/cli/install.php --non-interactive  --agree-license --dbuser=${mysql.dbuser} --dbpass=${mysql.dbpass} --dbname=${mysql.dbname} --dbtype=mariadb --adminpass=${moodle.adminpass} --wwwroot=${moodle.url}  --fullname=${moodle.fullname} --shortname=moodle --adminemail=${moodle.adminemail} --adminuser=${moodle.adminuser} --dataroot=${dataroot}`);
-            console.log(install)
+            try {
+                const { stdout, stderr, code } = await exec(`${env.php_path} moodle/admin/cli/install.php --non-interactive  --agree-license --dbuser=${mysql.dbuser} --dbpass=${mysql.dbpass} --dbname=${mysql.dbname} --dbtype=mariadb --adminpass=${moodle.adminpass} --wwwroot=${moodle.url}  --fullname=${moodle.fullname} --shortname=moodle --adminemail=${moodle.adminemail} --adminuser=${moodle.adminuser} --dataroot=${moodle.dataroot}`);
+                console.log(stdout)
+                console.log(stderr)
+                console.log(code)
+            } catch (error) {
+                console.log(error)
+            }
+
         }
         async clone_plugin(plugin) {
             let moodle = this.config.moodle;
