@@ -2,8 +2,9 @@ const menus = {
     main: `
       andres-cli [command] <options>
   
-      hello .............. show hello
+      aws ................ show aws options
       version ............ show package version
+      moodle  ............ moodle tools
       help ............... show help menu for a command`,
   
       hello: `
