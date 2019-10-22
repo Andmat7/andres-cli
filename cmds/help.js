@@ -3,6 +3,7 @@ const menus = {
       andres-cli [command] <options>
   
       aws ................ show aws options
+      install ............ show install options
       version ............ show package version
       moodle  ............ moodle tools
       help ............... show help menu for a command`,

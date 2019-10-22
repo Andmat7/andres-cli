@@ -10,9 +10,13 @@ module.exports = (args) => {
             break
         case 'moodle_plugin':
             require('./moodle/installPlugin')(args)
+        case 'help':
+            require('./help.js')(args)
             break
         default:
-            console.log(`"${cmd}" is not a valid install command!`, true)
+            console.log(`"${cmd}" is not a valid install command! run
+                        andres-cli install help
+                        `)
             break
     }
 }
