@@ -1,4 +1,5 @@
 #install npm
+```bash
 sudo apt install npm
 #install 
 git clone  git@github.com:Andmat7/andres-cli.git  andres-cli && cd andres-cli && 
