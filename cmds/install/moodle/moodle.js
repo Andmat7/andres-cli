@@ -32,7 +32,7 @@ module.exports =
         }
         async create_moodledata() {
             await exec(`mkdir  ${this.config.moodle.dataroot}`);
-            await exec(`chmod -R +a "_www allow read,delete,write,append,file_inherit,directory_inherit" ${this.config.moodle.dataroot}`);
+            await exec(`chmod -R +a "${this.config.moodle.apache_user} allow read,delete,write,append,file_inherit,directory_inherit" ${this.config.moodle.dataroot}`);
         }
         async install() {
             let mysql = this.config.mysql;

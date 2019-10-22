@@ -13,7 +13,8 @@
         "adminuser":"moodle36",
         "url":"http://localhost/moodle36/moodle/",
         "path_installation":"./moodle",
-        "dataroot":"./moodledata"
+        "dataroot":"../moodledata",
+        "apache_user":"_www"
     },
     "env":{
         "php_path":"/usr/local/opt/php@7.1/bin/php"
