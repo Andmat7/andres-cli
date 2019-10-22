@@ -10,7 +10,7 @@ module.exports = (args) => {
             break
 
         default:
-            console.log(`"${cmd}" is not a valid install command!`, true)
+            console.log(`"${cmd}" is not a AWS valid install command!`, true)
             break
     }
 }
