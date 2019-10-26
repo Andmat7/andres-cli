@@ -14,19 +14,8 @@ module.exports = () => {
   }
 
   switch (cmd) {
-    case 'today':
-      require('./cmds/today')(args)
-      break
-
-    case 'hello':
-      require('./cmds/hello')(args)
-      break
-
     case 'version':
       require('./cmds/version')(args)
-      break
-    case 'devops':
-      require('./cmds/devops')(args)
       break
     case 'help':
       require('./cmds/help')(args)
